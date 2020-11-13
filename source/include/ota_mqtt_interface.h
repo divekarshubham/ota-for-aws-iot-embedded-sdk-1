@@ -27,13 +27,34 @@
 #define _OTA_MQTT_INTERFACE_H_
 
 /* Standard library includes. */
-#include <stddef.h>
 #include <stdint.h>
 
 /**
- * @brief OTA Error type.
+ * @brief The OTA MQTT interface return status.
  */
-typedef uint32_t OtaErr_t;
+typedef enum OtaMqttStatus_t
+{
+    /**
+     * @brief OTA MQTT interface success.
+     */
+    OtaMqttSuccess,
+
+    /**
+     * @brief OTA MQTT interface subscribe failed.
+     */
+    OtaMqttSubscribeFailed,
+
+    /**
+     * @brief OTA MQTT interface unsubscribe failed.
+     */
+    OtaMqttUnsubscribeFailed,
+
+
+    /**
+     * @brief OTA MQTT interface publish failed..
+     */
+    OtaMqttPublishFailed,
+} OtaMqttStatus_t_t;
 
 /**
  * @brief OTA Mqtt callback.
@@ -55,13 +76,13 @@ typedef void ( * OtaMqttCallback_t )( void * pvParam );
  *
  * @param[pvCallback]           Callback to be registered.
  *
- * @return                      OTA_OS_ERR_OK if success , other error code on failure.
+ * @return OtaMqttSuccess if success, other error code on failure.
  */
 
-typedef OtaErr_t ( * OtaMqttSubscribe_t ) ( const char * pTopicFilter,
-                                            uint16_t topicFilterLength,
-                                            uint8_t ucQoS,
-                                            OtaMqttCallback_t callback );
+typedef OtaMqttStatus_t ( * OtaMqttSubscribe_t ) ( const char * pTopicFilter,
+                                                   uint16_t topicFilterLength,
+                                                   uint8_t ucQoS,
+                                                   OtaMqttCallback_t callback );
 
 /**
  * @brief Unsubscribe to the Mqtt topics.
@@ -75,12 +96,12 @@ typedef OtaErr_t ( * OtaMqttSubscribe_t ) ( const char * pTopicFilter,
  *
  * @param[ucQoS]                Quality of Service
  *
- * @return                      OTA_OS_ERR_OK if success , other error code on failure.
+ * @return OtaMqttSuccess if success, other error code on failure.
  */
 
-typedef OtaErr_t ( * OtaMqttUnsubscribe_t )  ( const char * pTopicFilter,
-                                               uint16_t topicFilterLength,
-                                               uint8_t ucQoS );
+typedef OtaMqttStatus_t ( * OtaMqttUnsubscribe_t )  ( const char * pTopicFilter,
+                                                      uint16_t topicFilterLength,
+                                                      uint8_t ucQoS );
 
 /**
  * @brief Publish message to a topic.
@@ -97,13 +118,13 @@ typedef OtaErr_t ( * OtaMqttUnsubscribe_t )  ( const char * pTopicFilter,
  *
  * @param[ucQoS]                Quality of Service
  *
- * @return                      OTA_OS_ERR_OK if success , other error code on failure.
+ * @return OtaMqttSuccess if success, other error code on failure.
  */
-typedef OtaErr_t ( * OtaMqttPublish_t )( const char * const pacTopic,
-                                         uint16_t usTopicLen,
-                                         const char * pcMsg,
-                                         uint32_t ulMsgSize,
-                                         uint8_t ucQos );
+typedef OtaMqttStatus_t ( * OtaMqttPublish_t )( const char * const pacTopic,
+                                                uint16_t usTopicLen,
+                                                const char * pcMsg,
+                                                uint32_t ulMsgSize,
+                                                uint8_t ucQos );
 
 /**
  *  OTA Event Interface structure.

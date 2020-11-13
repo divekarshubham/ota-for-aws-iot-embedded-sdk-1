@@ -39,9 +39,9 @@
  *
  * @param[pEventCtx]     Pointer to the OTA event context.
  *
- * @return               OtaErr_t, OTA_ERR_NONE if success , other error code on failure.
+ * @return OtaOsSuccess if success , other error code on failure.
  */
-OtaErr_t OtaInitEvent_FreeRTOS( OtaEventContext_t * pEventCtx );
+OtaOsStatus_t OtaInitEvent_FreeRTOS( OtaEventContext_t * pEventCtx );
 
 /**
  * @brief Sends an OTA event.
@@ -54,11 +54,11 @@ OtaErr_t OtaInitEvent_FreeRTOS( OtaEventContext_t * pEventCtx );
  *
  * @param[timeout]       The maximum amount of time (msec) the task should block.
  *
- * @return               OtaErr_t, OTA_ERR_NONE if success , other error code on failure.
+ * @return OtaOsSuccess if success , other error code on failure.
  */
-OtaErr_t OtaSendEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
-                                const void * pEventMsg,
-                                unsigned int timeout );
+OtaOsStatus_t OtaSendEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
+                                     const void * pEventMsg,
+                                     unsigned int timeout );
 
 /**
  * @brief Receive an OTA event.
@@ -71,11 +71,11 @@ OtaErr_t OtaSendEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
  *
  * @param[timeout]       The maximum amount of time the task should block.
  *
- * @return               OtaErr_t, OTA_ERR_NONE if success , other error code on failure.
+ * @return OtaOsSuccess if success , other error code on failure.
  */
-OtaErr_t OtaReceiveEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
-                                   void * pEventMsg,
-                                   uint32_t timeout );
+OtaOsStatus_t OtaReceiveEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
+                                        void * pEventMsg,
+                                        uint32_t timeout );
 
 /**
  * @brief Deinitialize the OTA Events mechanism.
@@ -85,9 +85,9 @@ OtaErr_t OtaReceiveEvent_FreeRTOS( OtaEventContext_t * pEventCtx,
  *
  * @param[pEventCtx]     Pointer to the OTA event context.
  *
- * @return               OtaErr_t, OTA_ERR_NONE if success , other error code on failure.
+ * @return OtaOsSuccess if success , other error code on failure.
  */
-OtaErr_t OtaDeinitEvent_FreeRTOS( OtaEventContext_t * pEventCtx );
+OtaOsStatus_t OtaDeinitEvent_FreeRTOS( OtaEventContext_t * pEventCtx );
 
 
 /**
@@ -103,12 +103,12 @@ OtaErr_t OtaDeinitEvent_FreeRTOS( OtaEventContext_t * pEventCtx );
  *
  * @param[callback]         Callback to be called when timer expires.
  *
- * @return                  OtaErr_t, OTA_ERR_NONE if success , other error code on failure.
+ * @return OtaOsSuccess if success , other error code on failure.
  */
-OtaErr_t OtaStartTimer_FreeRTOS( OtaTimerContext_t * pTimerCtx,
-                                 const char * const pTimerName,
-                                 const uint32_t timeout,
-                                 void ( * callback )( void * ) );
+OtaOsStatus_t OtaStartTimer_FreeRTOS( OtaTimerContext_t * pTimerCtx,
+                                      const char * const pTimerName,
+                                      const uint32_t timeout,
+                                      void ( * callback )( void * ) );
 
 /**
  * @brief Stop timer.
@@ -117,9 +117,9 @@ OtaErr_t OtaStartTimer_FreeRTOS( OtaTimerContext_t * pTimerCtx,
  *
  * @param[pTimerCtx]      Pointer to the timer context to start/reset. to stop.
  *
- * @return                OtaErr_t, OTA_ERR_NONE if success , other error code on failure.
+ * @return OtaOsSuccess if success , other error code on failure.
  */
-OtaErr_t OtaStopTimer_FreeRTOS( OtaTimerContext_t * pTimerCtx );
+OtaOsStatus_t OtaStopTimer_FreeRTOS( OtaTimerContext_t * pTimerCtx );
 
 /**
  * @brief Delete a timer.
@@ -128,9 +128,9 @@ OtaErr_t OtaStopTimer_FreeRTOS( OtaTimerContext_t * pTimerCtx );
  *
  * @param[pTimerCtx]        Pointer to the timer object to delete.
  *
- * @return                  OtaErr_t, OTA_ERR_NONE if success , other error code on failure.
+ * @return OtaOsSuccess if success , other error code on failure.
  */
-OtaErr_t OtaDeleteTimer_FreeRTOS( OtaTimerContext_t * pTimerCtx );
+OtaOsStatus_t OtaDeleteTimer_FreeRTOS( OtaTimerContext_t * pTimerCtx );
 
 /**
  * @brief Allocate memory.
