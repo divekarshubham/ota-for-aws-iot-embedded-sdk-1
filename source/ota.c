@@ -611,6 +611,10 @@ static OtaJobParseErr_t defaultCustomJobCallback( const char * pJson,
 
 static void setPALCallbacks( const OtaPalCallbacks_t * pCallbacks )
 {
+    /* Initialize ota pal callback.*/
+    OtaPalCallbacks_t palCallbacks = OTA_JOB_CALLBACK_DEFAULT_INITIALIZER;
+    otaAgent.palCallbacks = palCallbacks;
+
     if( pCallbacks->abortUpdate != NULL )
     {
         otaAgent.palCallbacks.abortUpdate = pCallbacks->abortUpdate;
@@ -1206,6 +1210,9 @@ static OtaErr_t shutdownHandler( const OtaEventData_t * pEventData )
     ( void ) memset( &otaAgent, 0, sizeof( otaAgent ) );
 
     otaAgent.state = OtaAgentStateStopped;
+
+    /* Terminate the OTA Agent Thread. */
+    pthread_exit( NULL );
 
     return OTA_ERR_NONE;
 }
@@ -2731,6 +2738,8 @@ OtaErr_t OTA_AgentInit( OtaAppBuffer_t * pOtaBuffer,
          * The OTA agent context is initialized with the prvPAL values. So, if null is passed in, don't
          * do anything and just use the defaults in the OTA structure.
          */
+        setPALCallbacks( &( pOtaInterfaces->pal ) );
+        otaAgent.palCallbacks.completeCallback = completeCallback;
 
         /*
          * Initialize the OTA control interface based on the application protocol
@@ -3030,12 +3039,13 @@ OtaErr_t OTA_Suspend( void )
     OtaErr_t err = OTA_ERR_UNINITIALIZED;
     OtaEventMsg_t eventMsg = { 0 };
 
-    /* Stop the request timer. */
-    otaAgent.pOtaInterface->os.timer.stop( OtaRequestTimer );
 
     /* Check if OTA Agent is running. */
     if( otaAgent.state != OtaAgentStateStopped )
     {
+        /* Stop the request timer. */
+        otaAgent.pOtaInterface->os.timer.stop( OtaRequestTimer );
+
         /*
          * Send event to OTA agent task.
          */

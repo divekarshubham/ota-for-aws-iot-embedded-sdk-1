@@ -594,7 +594,7 @@ void test_OTA_SuspendFailedWhenReady()
 void test_OTA_ResumeWhenStopped()
 {
     /* Calling resume when stopped should return an error. */
-    TEST_ASSERT_NOT_EQUAL( OTA_ERR_NONE, OTA_Resume( NULL ) );
+    TEST_ASSERT_NOT_EQUAL( OTA_ERR_NONE, OTA_Resume() );
 
     /* OTA agent should remain in stopped state. */
     otaWaitForEmptyEvent();
@@ -606,7 +606,7 @@ void test_OTA_ResumeWhenSuspended()
     otaGoToState( OtaAgentStateSuspended );
     TEST_ASSERT_EQUAL( OtaAgentStateSuspended, OTA_GetAgentState() );
 
-    TEST_ASSERT_EQUAL( OTA_ERR_NONE, OTA_Resume( NULL ) );
+    TEST_ASSERT_EQUAL( OTA_ERR_NONE, OTA_Resume() );
     otaWaitForState( OtaAgentStateRequestingJob );
     TEST_ASSERT_EQUAL( OtaAgentStateRequestingJob, OTA_GetAgentState() );
 }
@@ -618,7 +618,7 @@ void test_OTA_ResumeWhenReady()
 
     /* Calling resume when OTA agent is not suspend state. This should be an unexpected event and
      * the agent should remain in ready state. */
-    TEST_ASSERT_EQUAL( OTA_ERR_NONE, OTA_Resume( NULL ) );
+    TEST_ASSERT_EQUAL( OTA_ERR_NONE, OTA_Resume() );
     otaWaitForEmptyEvent();
     TEST_ASSERT_EQUAL( OtaAgentStateReady, OTA_GetAgentState() );
 }
@@ -632,7 +632,7 @@ void test_OTA_ResumeFailedWhenSuspended()
     otaInterfaces.os.event.send = mockOSEventSendAlwaysFail;
 
     /* Resume should fail and OTA agent should remain in suspend state. */
-    TEST_ASSERT_EQUAL( OTA_ERR_EVENT_Q_SEND_FAILED, OTA_Resume( NULL ) );
+    TEST_ASSERT_EQUAL( OTA_ERR_EVENT_Q_SEND_FAILED, OTA_Resume() );
     TEST_ASSERT_EQUAL( OtaAgentStateSuspended, OTA_GetAgentState() );
 }
 

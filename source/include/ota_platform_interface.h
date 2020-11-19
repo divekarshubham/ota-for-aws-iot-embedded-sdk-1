@@ -26,7 +26,6 @@
 #ifndef _OTA_PLATFORM_INTERFACE_
 #define _OTA_PLATFORM_INTERFACE_
 
-#include "ota_types.h"
 #include "ota.h"
 
 /**
