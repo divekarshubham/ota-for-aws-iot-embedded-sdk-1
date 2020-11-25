@@ -1212,9 +1212,6 @@ static OtaErr_t shutdownHandler( const OtaEventData_t * pEventData )
 
     otaAgent.state = OtaAgentStateStopped;
 
-    /* Terminate the OTA Agent Thread. */
-    pthread_exit( NULL );
-
     return OTA_ERR_NONE;
 }
 
@@ -1413,7 +1410,7 @@ static DocParseErr_t extractAndStoreArray( char * pKey,
 
             LogError( ( "Memory allocation failed "
                         "[key: valueLength]=[%s: %s]",
-                        docParam.pSrcKey,
+                        pKey,
                         valueLength ) );
         }
     }
@@ -1425,7 +1422,7 @@ static DocParseErr_t extractAndStoreArray( char * pKey,
 
             LogError( ( "Insufficient user memory: "
                         "[key: valueLength]=[%s: %s]",
-                        docParam.pSrcKey,
+                        pKey,
                         valueLength ) );
         }
         else
@@ -1445,9 +1442,11 @@ static DocParseErr_t extractAndStoreArray( char * pKey,
 
         LogInfo( ( "Extracted parameter: "
                    "[key: value]=[%s: %s]",
-                   docParam.pSrcKey,
+                   pKey,
                    pStringCopy ) );
     }
+
+    return err;
 }
 
 /* Store the parameter from the json to the offset specified by the document model. */
@@ -1587,7 +1586,7 @@ static DocParseErr_t parseJSONbyModel( const char * pJson,
     JSONStatus_t result;
     uint16_t paramIndex;
     char * pFileParams = NULL;
-    uint32_t fileParamsLength;
+    uint32_t fileParamsLength = 0;
 
     /* Fetch the model parameters from the DocModel*/
     pModelParam = pDocModel->pBodyDef;

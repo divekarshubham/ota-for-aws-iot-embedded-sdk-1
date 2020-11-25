@@ -27,9 +27,12 @@
 #include "FreeRTOS.h"
 #include "timers.h"
 #include "queue.h"
+#include "string.h"
 
 /* OTA OS POSIX Interface Includes.*/
 #include "ota_os_freertos.h"
+#include "ota.h"
+#include "ota_private.h"
 
 /* OTA Event queue attributes.*/
 #define MAX_MESSAGES    10
@@ -51,17 +54,17 @@ static OtaTimerCallback_t otaTimerCallback;
 static TimerHandle_t otaTimer[ OtaNumOfTimers ];
 
 /* OTA Timer callbacks.*/
-static void requestTimerCallback( union sigval arg );
-static void selfTestTimerCallback( union sigval arg );
+static void requestTimerCallback( TimerHandle_t T  );
+static void selfTestTimerCallback( TimerHandle_t T );
 void ( * timerCallback[ OtaNumOfTimers ] )( TimerHandle_t T ) = { requestTimerCallback, selfTestTimerCallback };
 
 OtaErr_t OtaInitEvent_FreeRTOS( OtaEventContext_t * pEventCtx )
 {
-    ( void ) pContext;
+    ( void ) pEventCtx;
 
     OtaErr_t otaErrRet = OTA_ERR_UNINITIALIZED;
 
-    otaEventQueue = xQueueCreateStatic( ( UBaseType_t ) OTA_NUM_MSG_Q_ENTRIES,
+    otaEventQueue = xQueueCreateStatic( ( UBaseType_t ) MAX_MESSAGES,
                                         ( UBaseType_t ) MAX_MSG_SIZE,
                                         ( uint8_t * ) queueData,
                                         &staticQueue );
@@ -97,7 +100,7 @@ OtaErr_t OtaSendEvent_FreeRTOS( OtaEventContext_t * pContext,
     BaseType_t retVal = pdFALSE;
 
     /* Send the event to OTA event queue.*/
-    retVal = xQueueSendToBack( otaEventQueue, pxEventMsg, ( TickType_t ) 0 );
+    retVal = xQueueSendToBack( otaEventQueue, pEventMsg, ( TickType_t ) 0 );
 
     if( retVal == pdTRUE )
     {
@@ -155,7 +158,7 @@ OtaErr_t OtaReceiveEvent_FreeRTOS( OtaEventContext_t * pContext,
     return otaErrRet;
 }
 
-void OtaDeinitEvent_FreeRTOS( OtaEventContext_t * pContext )
+OtaErr_t OtaDeinitEvent_FreeRTOS( OtaEventContext_t * pContext )
 {
     ( void ) pContext;
 
@@ -166,6 +169,8 @@ void OtaDeinitEvent_FreeRTOS( OtaEventContext_t * pContext )
 
         LogDebug( ( "OTA Event Queue Deleted." ) );
     }
+
+    return OTA_ERR_NONE;
 }
 
 static void selfTestTimerCallback( TimerHandle_t T )
@@ -221,7 +226,7 @@ OtaErr_t OtaStartTimer_FreeRTOS( OtaTimerId_t otaTimerId,
 
         if( otaTimer[ otaTimerId ] == NULL )
         {
-            otaErrRet = OTA_ERR_TIMER_CREATE_FAILED;
+            otaErrRet = OTA_ERR_EVENT_TIMER_CREATE_FAILED;
 
             LogError( ( "Failed to create OTA timer: "
                         "timerCreate returned NULL "
@@ -245,7 +250,7 @@ OtaErr_t OtaStartTimer_FreeRTOS( OtaTimerId_t otaTimerId,
             }
             else
             {
-                otaErrRet = OTA_ERR_TIMER_START_FAILED;
+                otaErrRet = OTA_ERR_EVENT_TIMER_START_FAILED;
 
                 LogError( ( "Failed to start OTA timer: "
                             "timerStart returned error." ) );
@@ -265,7 +270,7 @@ OtaErr_t OtaStartTimer_FreeRTOS( OtaTimerId_t otaTimerId,
         }
         else
         {
-            otaErrRet = OTA_ERR_TIMER_RESTART_FAILED;
+            otaErrRet = OTA_ERR_EVENT_TIMER_RESTART_FAILED;
 
             LogError( ( "Failed to set OTA timer timeout: "
                         "timer_settime returned error: "
@@ -280,6 +285,7 @@ OtaErr_t OtaStartTimer_FreeRTOS( OtaTimerId_t otaTimerId,
 OtaErr_t OtaStopTimer_FreeRTOS( OtaTimerId_t otaTimerId )
 {
     OtaErr_t otaErrRet = OTA_ERR_UNINITIALIZED;
+    BaseType_t retVal;
 
     if( otaTimer[ otaTimerId ] != NULL )
     {
@@ -299,7 +305,7 @@ OtaErr_t OtaStopTimer_FreeRTOS( OtaTimerId_t otaTimerId )
                         "otaErrRet=%i ",
                         otaErrRet ) );
 
-            otaErrRet = OTA_ERR_TIMER_STOP_FAILED;
+            otaErrRet = OTA_ERR_EVENT_TIMER_STOP_FAILED;
         }
     }
     else
@@ -315,6 +321,7 @@ OtaErr_t OtaStopTimer_FreeRTOS( OtaTimerId_t otaTimerId )
 OtaErr_t ota_DeleteTimer( OtaTimerId_t otaTimerId )
 {
     OtaErr_t otaErrRet = OTA_ERR_UNINITIALIZED;
+    BaseType_t retVal;
 
     if( otaTimer[ otaTimerId ] != NULL )
     {
@@ -325,13 +332,13 @@ OtaErr_t ota_DeleteTimer( OtaTimerId_t otaTimerId )
         {
             otaErrRet = OTA_ERR_NONE;
 
-            otaTimer[ otaTimerId ] == NULL;
+            otaTimer[ otaTimerId ] = NULL;
 
             LogDebug( ( "OTA Timer deleted." ) );
         }
         else
         {
-            otaErrRet = OTA_ERR_TIMER_DELETE_FAILED;
+            otaErrRet = OTA_ERR_EVENT_TIMER_DELETE_FAILED;
 
             LogError( ( "Failed to delete OTA timer: "
                         "timer_delete returned error: "
@@ -341,7 +348,7 @@ OtaErr_t ota_DeleteTimer( OtaTimerId_t otaTimerId )
     }
     else
     {
-        otaErrRet = OTA_ERR_TIMER_DELETE_FAILED;
+        otaErrRet = OTA_ERR_EVENT_TIMER_DELETE_FAILED;
 
         LogWarn( ( "OTA Timer handle NULL for Timerid=%i, can't delete.", otaTimerId ) );
     }
@@ -351,7 +358,7 @@ OtaErr_t ota_DeleteTimer( OtaTimerId_t otaTimerId )
 
 void * Malloc_FreeRTOS( size_t size )
 {
-    return vPortMalloc( size );
+    return pvPortMalloc( size );
 }
 
 void Malloc_Free( void * ptr )
