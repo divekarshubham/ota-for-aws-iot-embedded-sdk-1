@@ -602,6 +602,8 @@ static OtaErr_t processJobHandler( const OtaEventData_t * pEventData )
     OtaFileContext_t * pOtaFileContext = NULL;
     OtaEventMsg_t eventMsg = { 0 };
 
+    LogDebug(("Job Doc: %s",( const char * ) pEventData->data));
+
     /*
      * Parse the job document and update file information in the file context.
      */
@@ -849,7 +851,7 @@ static void dataHandlerCleanup( IngestResult_t result )
 
 static OtaErr_t processDataHandler( const OtaEventData_t * pEventData )
 {
-    OtaErr_t err = OTA_ERR_UNINITIALIZED;
+    OtaErr_t err = OTA_ERR_NONE;
     OtaErr_t closeResult = OTA_ERR_UNINITIALIZED;
     OtaEventMsg_t eventMsg = { 0 };
 
@@ -1002,6 +1004,8 @@ static OtaErr_t jobNotificationHandler( const OtaEventData_t * pEventData )
     OtaEventMsg_t eventMsg = { 0 };
 
     ( void ) pEventData;
+    
+    LogDebug(("Job Doc: %s",( const char * ) pEventData->data));
 
     /* Stop the request timer. */
     otaAgent.pOtaInterface->os.timer.stop( OtaRequestTimer );
