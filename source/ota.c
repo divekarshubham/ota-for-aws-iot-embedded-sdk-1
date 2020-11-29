@@ -2427,7 +2427,7 @@ static void executeHandler( uint32_t index,
         }
     }
 
-    LogDebug( ( "Current State=[%s]"
+    LogInfo( ( "Current State=[%s]"
                 ", Event=[%s]"
                 ", New state=[%s]",
                 pOtaAgentStateStrings[ otaAgent.state ],
