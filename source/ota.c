@@ -1714,6 +1714,7 @@ static DocParseErr_t parseJSONbyModel( const char * pJson,
 
     /* Check the validity of the JSON document */
     err = validateJSON( pJson, messageLength );
+    LogInfo(("JSON received: %s", pJson));
 
     /* Traverse the docModel and search the JSON if it containing the Source Key specified*/
     for( paramIndex = 0; paramIndex < pDocModel->numModelParams; paramIndex++ )
