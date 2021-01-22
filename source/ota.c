@@ -1146,6 +1146,18 @@ static void dataHandlerCleanup( IngestResult_t result )
     ( void ) memset( otaAgent.pActiveJobName, 0, OTA_JOB_ID_MAX_SIZE );
 }
 
+static void busySleep()
+{
+    LogInfo(("Busy waiting for the self_test message to get published"));
+    uint16_t counter = 0;
+    uint16_t sum = 0;
+    for(;counter<10000;counter++)
+    {
+        sum += counter;
+    }
+    LogInfo(("Busy waiting complete"));
+}
+
 static OtaErr_t processDataHandler( const OtaEventData_t * pEventData )
 {
     OtaErr_t err = OtaErrNone;
@@ -1165,6 +1177,7 @@ static OtaErr_t processDataHandler( const OtaEventData_t * pEventData )
     {
         /* File receive is complete and authenticated. Update the job status with the self_test ready identifier. */
         err = otaControlInterface.updateJobStatus( &otaAgent, JobStatusInProgress, JobReasonSigCheckPassed, 0 );
+        //busySleep();
         dataHandlerCleanup( result );
 
         /* Last file block processed, increment the statistics. */
