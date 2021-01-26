@@ -1434,7 +1434,7 @@ static void freeFileContextMem( OtaFileContext_t * const pFileContext )
     }
 
     /* Clear the self test flag.*/
-    otaAgent.fileContext.isInSelfTest = false;
+    //otaAgent.fileContext.isInSelfTest = false;
 }
 
 /* Close an existing OTA file context and free its resources. */
