@@ -2375,6 +2375,7 @@ static OtaFileContext_t * getFileContextFromJob( const char * pRawMsg,
             pUpdateFile->blocksRemaining = numBlocks; /* Initialize our blocks remaining counter. */
 
             /* Create/Open the OTA file on the file system. */
+            LogDebug(("Trying to create a file: %s", pUpdateFile->pFilePath));
             palStatus = otaAgent.pOtaInterface->pal.createFile( pUpdateFile );
 
             if( OTA_PAL_MAIN_ERR( palStatus ) != OtaPalSuccess )
