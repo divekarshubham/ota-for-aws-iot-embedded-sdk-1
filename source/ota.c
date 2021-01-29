@@ -1992,7 +1992,7 @@ static OtaJobParseErr_t verifyActiveJobStatus( OtaFileContext_t * pFileContext,
 
             /* Abort the current job. */
             ( void ) otaAgent.pOtaInterface->pal.setPlatformImageState( &( otaAgent.fileContext ), OtaImageStateAborted );
-            ( void ) otaClose( &( otaAgent.fileContext ) );
+            while( !otaClose( &( otaAgent.fileContext ) ) ){}
 
             /* Set new active job name. */
             ( void ) memcpy( otaAgent.pActiveJobName, pFileContext->pJobName, strlen( ( const char * ) pFileContext->pJobName ) );
