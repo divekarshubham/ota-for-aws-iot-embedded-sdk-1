@@ -1073,10 +1073,12 @@ OtaErr_t initFileTransfer_Mqtt( OtaAgentContext_t * pAgentCtx )
     /* The buffer is static and the size is calculated to fit. */
     assert( ( topicLen > 0U ) && ( topicLen < sizeof( pRxStreamTopic ) ) );
 
-    mqttStatus = pAgentCtx->pOtaInterface->mqtt.subscribe( pRxStreamTopic,
-                                                           topicLen,
-                                                           0 );
+    // mqttStatus = pAgentCtx->pOtaInterface->mqtt.subscribe( pRxStreamTopic,
+    //                                                        topicLen,
+    //                                                        0 );
 
+    mqttStatus = OtaMqttSuccess;
+    
     if( mqttStatus == OtaMqttSuccess )
     {
         LogDebug( ( "Subscribed to the OTA data stream topic: "
