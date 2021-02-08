@@ -765,6 +765,12 @@ static OtaErr_t inSelfTestHandler( const OtaEventData_t * pEventData )
     {
         /* Callback for application specific self-test. */
         otaAgent.OtaAppCallback( OtaJobEventStartTest, NULL );
+        
+        /* Clear self-test flag. */
+        otaAgent.fileContext.isInSelfTest = false;
+
+        /* Stop the self test timer as it is no longer required. */
+        otaAgent.pOtaInterface->os.timer.stop( OtaSelfTestTimer );
     }
     else
     {
@@ -953,9 +959,6 @@ static OtaErr_t processJobHandler( const OtaEventData_t * pEventData )
 {
     OtaErr_t retVal = OtaErrNone;
     OtaFileContext_t * pOtaFileContext = NULL;
-    
-    /* Clear the self test flag before parsing job document.*/
-    otaAgent.fileContext.isInSelfTest = false;
 
     /*
      * Parse the job document and update file information in the file context.
@@ -1432,9 +1435,6 @@ static void freeFileContextMem( OtaFileContext_t * const pFileContext )
             pFileContext->pAuthScheme = NULL;
         }
     }
-
-    /* Clear the self test flag.*/
-    //otaAgent.fileContext.isInSelfTest = false;
 }
 
 /* Close an existing OTA file context and free its resources. */
