@@ -1894,7 +1894,7 @@ static OtaErr_t validateUpdateVersion( const OtaFileContext_t * pFileContext )
                        "New image version=%u.%u.%u"
                        ", Old image version=%u.%u.%u",
                        appFirmwareVersion.u.x.major, appFirmwareVersion.u.x.minor, appFirmwareVersion.u.x.build,
-                       newVersion.u.x.major, newVersion.u.x.minor, newVersion.u.x.build ) );
+                       pFileContext->updaterVersion.u.x.major, pFileContext->updaterVersion.u.x.minor, pFileContext->updaterVersion.u.x.build ) );
         }
     }
 
